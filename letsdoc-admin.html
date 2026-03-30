@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lets!DOC — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #2AACE2;
+  --blue-dark: #0D1B2E;
+  --blue-mid: #1a3a5c;
+  --white: #ffffff;
+  --gray-50: #f7f8fa;
+  --gray-100: #eef0f4;
+  --gray-200: #d8dce5;
+  --gray-400: #8c94a6;
+  --gray-600: #4a5568;
+  --gray-900: #0f1923;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --warning: #d97706;
+  --warning-bg: #fef3c7;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+  --pending-bg: #f3f4f6;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Barlow',sans-serif; background:var(--gray-50); color:var(--gray-900); display:flex; min-height:100vh; }
+
+/* SIDEBAR */
+.sidebar { width:220px; min-height:100vh; background:var(--blue-dark); display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+.sidebar-logo { padding:24px 20px 18px; border-bottom:1px solid rgba(255,255,255,0.08); }
+.logo-text { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px; color:#fff; letter-spacing:-0.5px; }
+.logo-text .bang { color:var(--blue); }
+.logo-sub { font-size:10px; color:rgba(255,255,255,0.35); letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+.admin-badge { margin-top:8px; display:inline-block; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; background:rgba(42,172,226,0.2); color:var(--blue); padding:3px 8px; border-radius:3px; border:1px solid rgba(42,172,226,0.3); }
+.sidebar-nav { flex:1; padding:16px 0; }
+.nav-section { font-size:10px; color:rgba(255,255,255,0.3); letter-spacing:1.2px; text-transform:uppercase; padding:0 20px; margin-bottom:4px; margin-top:14px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-size:13px; font-weight:500; color:rgba(255,255,255,0.5); cursor:pointer; transition:all 0.15s; border-left:3px solid transparent; }
+.nav-item:hover { color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.05); }
+.nav-item.active { color:#fff; background:rgba(42,172,226,0.15); border-left-color:var(--blue); }
+.nav-icon { width:15px; height:15px; flex-shrink:0; opacity:0.7; }
+.nav-badge { margin-left:auto; background:var(--blue); color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; }
+.sidebar-footer { padding:16px 20px; border-top:1px solid rgba(255,255,255,0.08); font-size:10px; color:rgba(255,255,255,0.25); line-height:1.7; }
+
+/* MAIN */
+.main { margin-left:220px; flex:1; }
+.topbar { background:#fff; border-bottom:1px solid var(--gray-100); padding:0 28px; height:58px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+.topbar-title { font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:700; letter-spacing:0.3px; }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.topbar-date { font-size:12px; color:var(--gray-400); }
+.content { padding:24px 28px; }
+
+/* TAB PANELS */
+.tab-panel { display:none; }
+.tab-panel.active { display:block; animation:fadeIn 0.2s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+/* SECTION HEADER */
+.section-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; }
+.section-title { font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; }
+.section-sub { font-size:12px; color:var(--gray-400); margin-top:2px; }
+
+/* BUTTONS */
+.btn { font-family:'Barlow',sans-serif; font-size:12px; font-weight:600; padding:8px 16px; border-radius:7px; cursor:pointer; border:none; transition:all 0.15s; display:inline-flex; align-items:center; gap:6px; }
+.btn-primary { background:var(--blue); color:#fff; }
+.btn-primary:hover { background:#1d96c8; }
+.btn-dark { background:var(--blue-dark); color:#fff; }
+.btn-dark:hover { background:#162840; }
+.btn-ghost { background:#fff; color:var(--gray-600); border:1px solid var(--gray-200); }
+.btn-ghost:hover { background:var(--gray-50); }
+.btn-danger { background:var(--danger-bg); color:var(--danger); border:1px solid #fecaca; }
+.btn-sm { padding:5px 11px; font-size:11px; }
+
+/* METRICS */
+.metrics-row { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+.metric-card { background:#fff; border:1px solid var(--gray-100); border-radius:12px; padding:16px 18px; }
+.metric-label { font-size:11px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.7px; margin-bottom:6px; }
+.metric-value { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:700; color:var(--gray-900); line-height:1; }
+.metric-tag { display:inline-block; margin-top:7px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:4px; }
+.tag-blue { background:#e8f5fc; color:var(--blue); }
+.tag-green { background:var(--success-bg); color:var(--success); }
+.tag-amber { background:var(--warning-bg); color:var(--warning); }
+.tag-gray { background:var(--pending-bg); color:var(--gray-400); }
+.tag-red { background:var(--danger-bg); color:var(--danger); }
+
+/* CLIENTS LIST */
+.clients-grid { display:flex; flex-direction:column; gap:10px; }
+.client-card { background:#fff; border:1px solid var(--gray-100); border-radius:12px; padding:18px 20px; display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:16px; transition:border-color 0.15s; }
+.client-card:hover { border-color:var(--gray-200); }
+.client-avatar { width:42px; height:42px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#fff; flex-shrink:0; }
+.client-name { font-size:14px; font-weight:600; color:var(--gray-900); margin-bottom:2px; }
+.client-spec { font-size:12px; color:var(--gray-400); }
+.client-plan { font-size:11px; font-weight:700; padding:3px 8px; border-radius:4px; margin-top:5px; display:inline-block; }
+.plan-core { background:#e8f5fc; color:var(--blue); }
+.plan-elevate { background:#ede9fe; color:#5b21b6; }
+.plan-master { background:#fef3c7; color:#92400e; }
+.client-progress { min-width:160px; }
+.prog-label { font-size:11px; color:var(--gray-400); margin-bottom:5px; display:flex; justify-content:space-between; }
+.prog-bar { height:5px; background:var(--gray-100); border-radius:3px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--blue); border-radius:3px; }
+.client-actions { display:flex; gap:6px; }
+
+/* PHASE BADGE */
+.phase-badge { font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+.phase-1 { background:var(--success-bg); color:var(--success); }
+.phase-2 { background:#e8f5fc; color:var(--blue); }
+.phase-3 { background:var(--warning-bg); color:var(--warning); }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; display:none; align-items:center; justify-content:center; padding:24px; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:16px; width:100%; max-width:540px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+.modal-header { padding:22px 24px 0; display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.modal-title { font-family:'Barlow Condensed',sans-serif; font-size:19px; font-weight:700; }
+.modal-close { width:32px; height:32px; border-radius:8px; border:1px solid var(--gray-200); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--gray-400); }
+.modal-body { padding:0 24px 24px; }
+.form-row { margin-bottom:16px; }
+.form-label { display:block; font-size:12px; font-weight:600; color:var(--gray-600); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
+.form-input { width:100%; font-family:'Barlow',sans-serif; font-size:13px; color:var(--gray-900); background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:9px 12px; outline:none; transition:border-color 0.15s; }
+.form-input:focus { border-color:var(--blue); background:#fff; }
+.form-select { width:100%; font-family:'Barlow',sans-serif; font-size:13px; color:var(--gray-900); background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:9px 12px; outline:none; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid var(--gray-100); }
+
+/* APPROVALS TABLE */
+.approval-table { width:100%; border-collapse:collapse; }
+.approval-table th { text-align:left; font-size:11px; font-weight:700; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.7px; padding:10px 14px; border-bottom:2px solid var(--gray-100); background:#fff; }
+.approval-table td { padding:13px 14px; border-bottom:1px solid var(--gray-100); font-size:13px; vertical-align:middle; }
+.approval-table tr:last-child td { border-bottom:none; }
+.approval-table tr:hover td { background:var(--gray-50); }
+.table-wrap { background:#fff; border:1px solid var(--gray-100); border-radius:12px; overflow:hidden; }
+
+/* UPLOAD AREA */
+.upload-zone { border:2px dashed var(--gray-200); border-radius:10px; padding:28px; text-align:center; cursor:pointer; transition:all 0.15s; background:var(--gray-50); }
+.upload-zone:hover { border-color:var(--blue); background:#f0f9ff; }
+.upload-icon { font-size:28px; margin-bottom:8px; }
+.upload-text { font-size:13px; font-weight:600; color:var(--gray-600); }
+.upload-sub { font-size:11px; color:var(--gray-400); margin-top:3px; }
+
+/* PROGRESS EDITOR */
+.phase-editor { background:var(--gray-50); border-radius:10px; padding:16px; margin-bottom:12px; border:1px solid var(--gray-100); }
+.phase-editor-title { font-size:13px; font-weight:600; color:var(--gray-900); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.range-wrap { display:flex; align-items:center; gap:10px; }
+.range-input { flex:1; accent-color:var(--blue); }
+.range-val { font-size:13px; font-weight:700; color:var(--blue); min-width:34px; }
+
+/* TOAST */
+.toast { position:fixed; bottom:20px; right:20px; background:var(--blue-dark); color:#fff; font-size:13px; font-weight:500; padding:11px 16px; border-radius:10px; display:flex; align-items:center; gap:8px; box-shadow:0 4px 20px rgba(0,0,0,0.25); transform:translateY(80px); opacity:0; transition:all 0.3s ease; z-index:999; }
+.toast.show { transform:translateY(0); opacity:1; }
+
+/* CARD */
+.card { background:#fff; border:1px solid var(--gray-100); border-radius:12px; padding:20px; }
+.card-title { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; color:var(--gray-900); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px; }
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">LETS<span class="bang">!</span>DOC</div>
+    <div class="logo-sub">Painel Admin</div>
+    <div class="admin-badge">Admin</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Visão geral</div>
+    <div class="nav-item active" onclick="navigate('dashboard',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-section">Clientes</div>
+    <div class="nav-item" onclick="navigate('clientes',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Clientes
+      <span class="nav-badge" id="clients-count">3</span>
+    </div>
+    <div class="nav-item" onclick="navigate('progresso',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12V4M6 12V7M10 12V5M14 12V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Progresso
+    </div>
+    <div class="nav-section">Conteúdo</div>
+    <div class="nav-item" onclick="navigate('upload',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 10V3M8 3L5 6M8 3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Upload de Conteúdo
+    </div>
+    <div class="nav-item" onclick="navigate('aprovacoes',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z" stroke="currentColor" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Aprovações
+      <span class="nav-badge" id="aprov-badge">5</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    Lets!DOC · Admin Panel<br>
+    contato@lets-doc.com<br>
+    <span style="color:rgba(255,255,255,0.15)">v1.0 · 2026</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">DASHBOARD</div>
+    <div class="topbar-right">
+      <div class="topbar-date">30 mar 2026</div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-novo-cliente')">+ Novo cliente</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Visão geral</div>
+          <div class="section-sub">Acompanhe todos os clientes ativos</div>
+        </div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Clientes ativos</div>
+          <div class="metric-value">3</div>
+          <div class="metric-tag tag-blue">Em operação</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Aprovações pendentes</div>
+          <div class="metric-value">5</div>
+          <div class="metric-tag tag-amber">Aguardando</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Conteúdos enviados</div>
+          <div class="metric-value">28</div>
+          <div class="metric-tag tag-green">Este mês</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Receita mensal</div>
+          <div class="metric-value" style="font-size:20px">R$ 16k</div>
+          <div class="metric-tag tag-green">3 contratos</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-title">Status por cliente</div>
+          <div style="display:flex;flex-direction:column;gap:10px;" id="dash-clients">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0;">LG</div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;">Dra. Luanne Gerbassi</div>
+                <div style="font-size:11px;color:var(--gray-400);">Semana 03 · Produção</div>
+              </div>
+              <span class="phase-badge phase-2">Fase 02</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="width:36px;height:36px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0;">LM</div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;">Dr. Lucas Mendes</div>
+                <div style="font-size:11px;color:var(--gray-400);">Semana 01 · Início</div>
+              </div>
+              <span class="phase-badge phase-1">Fase 01</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#16a34a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0;">AC</div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;">Dra. Ana Cardoso</div>
+                <div style="font-size:11px;color:var(--gray-400);">Semana 05 · Publicação</div>
+              </div>
+              <span class="phase-badge phase-3">Fase 03</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Aprovações recentes</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+              <span style="font-size:18px;">🎬</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Reel — Diabetes tipo 2</div>
+                <div style="font-size:11px;color:var(--gray-400);">Luanne · Enviado 28 mar</div>
+              </div>
+              <span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+              <span style="font-size:18px;">📸</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Carrossel — Tireoide</div>
+                <div style="font-size:11px;color:var(--gray-400);">Luanne · Enviado 29 mar</div>
+              </div>
+              <span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gray-100);">
+              <span style="font-size:18px;">🎬</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Reel — Osteoporose</div>
+                <div style="font-size:11px;color:var(--gray-400);">Ana Cardoso · Enviado 30 mar</div>
+              </div>
+              <span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+              <span style="font-size:18px;">📸</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Carrossel — Acne hormonal</div>
+                <div style="font-size:11px;color:var(--gray-400);">Luanne · Aprovado 25 mar</div>
+              </div>
+              <span class="metric-tag tag-green" style="margin-top:0;">Aprovado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="tab-clientes" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Clientes</div>
+          <div class="section-sub">Gerencie todos os clientes ativos</div>
+        </div>
+        <button class="btn btn-dark" onclick="openModal('modal-novo-cliente')">+ Novo cliente</button>
+      </div>
+
+      <div class="clients-grid" id="clients-list">
+
+        <div class="client-card">
+          <div class="client-avatar">LG</div>
+          <div>
+            <div class="client-name">Dra. Luanne Gerbassi</div>
+            <div class="client-spec">Endocrinologia · Dermatologia · Rio de Janeiro</div>
+            <span class="client-plan plan-elevate">Lets Elevate · 6 meses</span>
+          </div>
+          <div class="client-progress">
+            <div class="prog-label"><span>Progresso</span><span>25%</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:25%"></div></div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">18 / 72 conteúdos · Semana 3</div>
+          </div>
+          <div class="client-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editClient('LG','Dra. Luanne Gerbassi','Endocrinologia · Dermatologia','elevate','Rio de Janeiro','contato@draluanne.com.br','(21) 99000-0001')">Editar</button>
+            <button class="btn btn-primary btn-sm" onclick="navigate('progresso', document.querySelectorAll(\'.nav-item\')[3])">Ver progresso</button>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-avatar" style="background:#7c3aed;">LM</div>
+          <div>
+            <div class="client-name">Dr. Lucas Mendes</div>
+            <div class="client-spec">Ortopedia · São Paulo</div>
+            <span class="client-plan plan-core">Lets Core · 4 meses</span>
+          </div>
+          <div class="client-progress">
+            <div class="prog-label"><span>Progresso</span><span>5%</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:5%"></div></div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">2 / 48 conteúdos · Semana 1</div>
+          </div>
+          <div class="client-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editClient('LM','Dr. Lucas Mendes','Ortopedia','core','São Paulo','lucas@draortopedia.com.br','(11) 99000-0002')">Editar</button>
+            <button class="btn btn-primary btn-sm" onclick="navigate('progresso', document.querySelectorAll(\'.nav-item\')[3])">Ver progresso</button>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-avatar" style="background:#16a34a;">AC</div>
+          <div>
+            <div class="client-name">Dra. Ana Cardoso</div>
+            <div class="client-spec">Ginecologia · Rio de Janeiro</div>
+            <span class="client-plan plan-master">Lets Master · 8 meses</span>
+          </div>
+          <div class="client-progress">
+            <div class="prog-label"><span>Progresso</span><span>68%</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:68%"></div></div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">65 / 96 conteúdos · Semana 5</div>
+          </div>
+          <div class="client-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editClient('AC','Dra. Ana Cardoso','Ginecologia','master','Rio de Janeiro','ana@dracardoso.com.br','(21) 99000-0003')">Editar</button>
+            <button class="btn btn-primary btn-sm" onclick="navigate('progresso', document.querySelectorAll(\'.nav-item\')[3])">Ver progresso</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PROGRESSO -->
+    <div id="tab-progresso" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Atualizar progresso</div>
+          <div class="section-sub">Edite fases, semana e percentual de cada cliente</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Cliente 1 -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;">LG</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;">Dra. Luanne Gerbassi</div>
+                <div style="font-size:11px;color:var(--gray-400);">Lets Elevate · 72 conteúdos</div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveProgress('LG')">Salvar</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div>
+              <label class="form-label">Semana atual</label>
+              <select class="form-select" id="lg-semana">
+                <option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Fase ativa</label>
+              <select class="form-select" id="lg-fase">
+                <option>Fase 01 — Estratégia</option>
+                <option selected>Fase 02 — Produção</option>
+                <option>Fase 03 — Publicação</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Conteúdos entregues</label>
+              <input type="number" class="form-input" id="lg-conteudos" value="18" min="0" max="72">
+            </div>
+          </div>
+
+          <div class="phase-editor">
+            <div class="phase-editor-title">Fase 01 — Estratégia <span class="metric-tag tag-green" style="margin-top:0;">Concluída</span></div>
+            <div class="range-wrap">
+              <input type="range" class="range-input" min="0" max="100" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'">
+              <span class="range-val">100%</span>
+            </div>
+          </div>
+          <div class="phase-editor">
+            <div class="phase-editor-title">Fase 02 — Produção <span class="metric-tag tag-blue" style="margin-top:0;">Em andamento</span></div>
+            <div class="range-wrap">
+              <input type="range" class="range-input" min="0" max="100" value="45" oninput="this.nextElementSibling.textContent=this.value+'%'">
+              <span class="range-val">45%</span>
+            </div>
+          </div>
+          <div class="phase-editor">
+            <div class="phase-editor-title">Fase 03 — Publicação <span class="metric-tag tag-gray" style="margin-top:0;">Aguardando</span></div>
+            <div class="range-wrap">
+              <input type="range" class="range-input" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value+'%'">
+              <span class="range-val">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cliente 2 -->
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;">LM</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;">Dr. Lucas Mendes</div>
+                <div style="font-size:11px;color:var(--gray-400);">Lets Core · 48 conteúdos</div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveProgress('LM')">Salvar</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div>
+              <label class="form-label">Semana atual</label>
+              <select class="form-select"><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+            </div>
+            <div>
+              <label class="form-label">Fase ativa</label>
+              <select class="form-select"><option selected>Fase 01 — Estratégia</option><option>Fase 02 — Produção</option><option>Fase 03 — Publicação</option></select>
+            </div>
+            <div>
+              <label class="form-label">Conteúdos entregues</label>
+              <input type="number" class="form-input" value="2" min="0" max="48">
+            </div>
+          </div>
+          <div class="phase-editor">
+            <div class="phase-editor-title">Fase 01 — Estratégia <span class="metric-tag tag-blue" style="margin-top:0;">Em andamento</span></div>
+            <div class="range-wrap">
+              <input type="range" class="range-input" min="0" max="100" value="30" oninput="this.nextElementSibling.textContent=this.value+'%'">
+              <span class="range-val">30%</span>
+            </div>
+          </div>
+          <div class="phase-editor">
+            <div class="phase-editor-title">Fase 02 — Produção <span class="metric-tag tag-gray" style="margin-top:0;">Aguardando</span></div>
+            <div class="range-wrap">
+              <input type="range" class="range-input" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value+'%'">
+              <span class="range-val">0%</span>
+            </div>
+          </div>
+          <div class="phase-editor">
+            <div class="phase-editor-title">Fase 03 — Publicação <span class="metric-tag tag-gray" style="margin-top:0;">Aguardando</span></div>
+            <div class="range-wrap">
+              <input type="range" class="range-input" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value+'%'">
+              <span class="range-val">0%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div id="tab-upload" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Upload de conteúdo</div>
+          <div class="section-sub">Envie reels e carrosséis para aprovação do cliente</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-title">Enviar novo conteúdo</div>
+          <div class="form-row">
+            <label class="form-label">Cliente</label>
+            <select class="form-select" id="upload-cliente">
+              <option value="">Selecione o cliente</option>
+              <option>Dra. Luanne Gerbassi</option>
+              <option>Dr. Lucas Mendes</option>
+              <option>Dra. Ana Cardoso</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Tipo de conteúdo</label>
+            <select class="form-select" id="upload-tipo">
+              <option>Reel</option>
+              <option>Carrossel</option>
+              <option>Card institucional</option>
+              <option>Vídeo real time</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Título do conteúdo</label>
+            <input type="text" class="form-input" id="upload-titulo" placeholder="Ex: Diabetes tipo 2 — 5 mitos">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Canal de publicação</label>
+            <select class="form-select" id="upload-canal">
+              <option>Instagram + TikTok</option>
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>LinkedIn</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Link do conteúdo (Drive / Dropbox)</label>
+            <input type="text" class="form-input" id="upload-link" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-row">
+            <div class="upload-zone" onclick="document.getElementById('file-input').click()">
+              <div class="upload-icon">📎</div>
+              <div class="upload-text">Arraste o arquivo ou clique para selecionar</div>
+              <div class="upload-sub">MP4, MOV, PDF, ZIP · Máx 50mb</div>
+              <input type="file" id="file-input" style="display:none" onchange="fileSelected(this)">
+            </div>
+            <div id="file-name" style="font-size:12px;color:var(--blue);margin-top:6px;display:none;"></div>
+          </div>
+          <button class="btn btn-dark" style="width:100%;" onclick="submitUpload()">Enviar para aprovação</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Conteúdos enviados</div>
+          <div style="display:flex;flex-direction:column;gap:8px;" id="uploaded-list">
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-100);">
+              <span style="font-size:18px;">🎬</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Reel — Diabetes tipo 2</div>
+                <div style="font-size:11px;color:var(--gray-400);">Luanne · 28 mar · Instagram + TikTok</div>
+              </div>
+              <span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-100);">
+              <span style="font-size:18px;">📸</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Carrossel — Tireoide</div>
+                <div style="font-size:11px;color:var(--gray-400);">Luanne · 29 mar · Instagram</div>
+              </div>
+              <span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-100);">
+              <span style="font-size:18px;">🎬</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Reel — Osteoporose</div>
+                <div style="font-size:11px;color:var(--gray-400);">Ana Cardoso · 30 mar · Instagram + TikTok</div>
+              </div>
+              <span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;">
+              <span style="font-size:18px;">📸</span>
+              <div style="flex:1;">
+                <div style="font-size:12px;font-weight:600;">Carrossel — Acne hormonal</div>
+                <div style="font-size:11px;color:var(--gray-400);">Luanne · 25 mar · Instagram</div>
+              </div>
+              <span class="metric-tag tag-green" style="margin-top:0;">Aprovado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APROVAÇÕES ADMIN -->
+    <div id="tab-aprovacoes" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Status de aprovações</div>
+          <div class="section-sub">Acompanhe o que foi aprovado, pendente ou ajustado</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="approval-table">
+          <thead>
+            <tr>
+              <th>Conteúdo</th>
+              <th>Cliente</th>
+              <th>Tipo</th>
+              <th>Canal</th>
+              <th>Enviado em</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="approval-tbody">
+            <tr>
+              <td><span style="font-weight:600;">Reel — Diabetes tipo 2</span></td>
+              <td><span style="font-size:12px;color:var(--gray-400);">Dra. Luanne</span></td>
+              <td>🎬 Reel</td>
+              <td><span class="metric-tag tag-blue" style="margin-top:0;">Insta + TikTok</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">28 mar</td>
+              <td><span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="markDone(this)">Marcar enviado</button></td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:600;">Carrossel — Tireoide</span></td>
+              <td><span style="font-size:12px;color:var(--gray-400);">Dra. Luanne</span></td>
+              <td>📸 Carrossel</td>
+              <td><span class="metric-tag tag-blue" style="margin-top:0;">Instagram</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">29 mar</td>
+              <td><span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="markDone(this)">Marcar enviado</button></td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:600;">Reel — Pré-diabetes</span></td>
+              <td><span style="font-size:12px;color:var(--gray-400);">Dra. Luanne</span></td>
+              <td>🎬 Reel</td>
+              <td><span class="metric-tag tag-blue" style="margin-top:0;">Insta + TikTok</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">30 mar</td>
+              <td><span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="markDone(this)">Marcar enviado</button></td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:600;">Reel — Osteoporose</span></td>
+              <td><span style="font-size:12px;color:var(--gray-400);">Dra. Ana Cardoso</span></td>
+              <td>🎬 Reel</td>
+              <td><span class="metric-tag tag-blue" style="margin-top:0;">Insta + TikTok</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">30 mar</td>
+              <td><span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="markDone(this)">Marcar enviado</button></td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:600;">Card — Consulta preventiva</span></td>
+              <td><span style="font-size:12px;color:var(--gray-400);">Dr. Lucas Mendes</span></td>
+              <td>📸 Card</td>
+              <td><span class="metric-tag tag-blue" style="margin-top:0;">Instagram</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">30 mar</td>
+              <td><span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span></td>
+              <td><button class="btn btn-ghost btn-sm" onclick="markDone(this)">Marcar enviado</button></td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:600;">Carrossel — Acne hormonal</span></td>
+              <td><span style="font-size:12px;color:var(--gray-400);">Dra. Luanne</span></td>
+              <td>📸 Carrossel</td>
+              <td><span class="metric-tag tag-blue" style="margin-top:0;">Instagram</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">25 mar</td>
+              <td><span class="metric-tag tag-green" style="margin-top:0;">Aprovado</span></td>
+              <td style="color:var(--gray-400);font-size:12px;">Cliente aprovou</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODAL NOVO CLIENTE -->
+<div class="modal-overlay" id="modal-novo-cliente">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-client-title">Novo cliente</div>
+      <button class="modal-close" onclick="closeModal('modal-novo-cliente')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Nome completo</label>
+          <input type="text" class="form-input" id="f-nome" placeholder="Dra. Nome Sobrenome">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Especialidade</label>
+          <input type="text" class="form-input" id="f-spec" placeholder="Cardiologia">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">E-mail</label>
+          <input type="email" class="form-input" id="f-email" placeholder="dra@clinica.com.br">
+        </div>
+        <div class="form-row">
+          <label class="form-label">WhatsApp</label>
+          <input type="text" class="form-input" id="f-whatsapp" placeholder="(21) 99000-0000">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Cidade</label>
+          <input type="text" class="form-input" id="f-cidade" placeholder="Rio de Janeiro">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Plano</label>
+          <select class="form-select" id="f-plano">
+            <option value="core">Lets Core — 4 meses</option>
+            <option value="elevate">Lets Elevate — 6 meses</option>
+            <option value="master">Lets Master — 8 meses</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Observações</label>
+        <input type="text" class="form-input" id="f-obs" placeholder="Ex: Foco em conteúdo educativo, tom mais formal">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" onclick="closeModal('modal-novo-cliente')">Cancelar</button>
+        <button class="btn btn-dark" onclick="saveClient()">Salvar cliente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+function navigate(tab, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'DASHBOARD', clientes:'CLIENTES', progresso:'ATUALIZAR PROGRESSO', upload:'UPLOAD DE CONTEÚDO', aprovacoes:'APROVAÇÕES' };
+  document.getElementById('page-title').textContent = titles[tab] || tab.toUpperCase();
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function editClient(initials, nome, spec, plano, cidade, email, tel) {
+  document.getElementById('modal-client-title').textContent = 'Editar cliente';
+  document.getElementById('f-nome').value = nome;
+  document.getElementById('f-spec').value = spec;
+  document.getElementById('f-email').value = email;
+  document.getElementById('f-whatsapp').value = tel;
+  document.getElementById('f-cidade').value = cidade;
+  document.getElementById('f-plano').value = plano;
+  openModal('modal-novo-cliente');
+}
+
+function saveClient() {
+  const nome = document.getElementById('f-nome').value.trim();
+  if (!nome) { document.getElementById('f-nome').focus(); return; }
+  closeModal('modal-novo-cliente');
+  showToast('Cliente salvo com sucesso!');
+}
+
+function saveProgress(client) {
+  showToast('Progresso de ' + client + ' atualizado!');
+}
+
+function submitUpload() {
+  const cliente = document.getElementById('upload-cliente').value;
+  const titulo = document.getElementById('upload-titulo').value.trim();
+  if (!cliente || !titulo) { showToast('Preencha cliente e título.'); return; }
+  const tipo = document.getElementById('upload-tipo').value;
+  const canal = document.getElementById('upload-canal').value;
+  const emoji = tipo === 'Reel' ? '🎬' : '📸';
+  const list = document.getElementById('uploaded-list');
+  const item = document.createElement('div');
+  item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--gray-100);';
+  item.innerHTML = `<span style="font-size:18px;">${emoji}</span><div style="flex:1;"><div style="font-size:12px;font-weight:600;">${tipo} — ${titulo}</div><div style="font-size:11px;color:var(--gray-400);">${cliente.split(' ').slice(-1)[0]} · Agora · ${canal}</div></div><span class="metric-tag tag-amber" style="margin-top:0;">Pendente</span>`;
+  list.insertBefore(item, list.firstChild);
+  document.getElementById('upload-titulo').value = '';
+  document.getElementById('upload-link').value = '';
+  document.getElementById('file-name').style.display = 'none';
+  showToast('Conteúdo enviado para aprovação!');
+  const badge = document.getElementById('aprov-badge');
+  badge.textContent = parseInt(badge.textContent) + 1;
+}
+
+function fileSelected(input) {
+  const fn = document.getElementById('file-name');
+  fn.textContent = '📎 ' + input.files[0].name;
+  fn.style.display = 'block';
+}
+
+function markDone(btn) {
+  const row = btn.closest('tr');
+  const statusCell = row.cells[5];
+  statusCell.innerHTML = '<span class="metric-tag tag-green" style="margin-top:0;">Publicado</span>';
+  btn.remove();
+  showToast('Marcado como publicado!');
+  const badge = document.getElementById('aprov-badge');
+  const val = parseInt(badge.textContent) - 1;
+  badge.textContent = Math.max(0, val);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
