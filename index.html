@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lets!DOC — Portal do Cliente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2AACE2;
+    --blue-dark: #0D1B2E;
+    --blue-mid: #1a3a5c;
+    --blue-light: #e8f5fc;
+    --white: #ffffff;
+    --gray-50: #f7f8fa;
+    --gray-100: #eef0f4;
+    --gray-200: #d8dce5;
+    --gray-400: #8c94a6;
+    --gray-600: #4a5568;
+    --gray-900: #0f1923;
+    --success: #16a34a;
+    --success-bg: #dcfce7;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --pending: #6b7280;
+    --pending-bg: #f3f4f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--blue-dark);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    color: var(--white);
+  }
+  .logo-text .bang { color: var(--blue); }
+
+  .logo-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .sidebar-client {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .client-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .client-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: white;
+    margin-bottom: 8px;
+  }
+
+  .client-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .client-spec {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .plan-badge {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    background: var(--blue);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0 24px;
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .nav-item.active {
+    color: var(--white);
+    background: rgba(42,172,226,0.15);
+    border-left-color: var(--blue);
+  }
+
+  .nav-icon {
+    width: 16px; height: 16px;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--blue);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .footer-line {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.6;
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: white;
+    border-bottom: 1px solid var(--gray-100);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .topbar-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-900);
+    letter-spacing: 0.3px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .topbar-date {
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  .notif-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  .notif-dot {
+    width: 7px; height: 7px;
+    background: var(--blue);
+    border-radius: 50%;
+    position: absolute;
+    top: 6px; right: 6px;
+    border: 1.5px solid white;
+  }
+
+  .content {
+    padding: 28px 32px;
+  }
+
+  /* TABS */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gray-900);
+    letter-spacing: 0.3px;
+  }
+
+  .section-sub {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-top: 3px;
+  }
+
+  /* METRIC CARDS */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .metric-card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1;
+  }
+
+  .metric-value .unit {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--gray-400);
+  }
+
+  .metric-tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .tag-blue { background: #e8f5fc; color: var(--blue); }
+  .tag-green { background: var(--success-bg); color: var(--success); }
+  .tag-amber { background: var(--warning-bg); color: var(--warning); }
+  .tag-gray { background: var(--pending-bg); color: var(--pending); }
+
+  /* FASE CARDS */
+  .fases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .fase-card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gray-200);
+  }
+
+  .fase-card.done::before { background: var(--success); }
+  .fase-card.active::before { background: var(--blue); }
+
+  .fase-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 6px;
+  }
+
+  .fase-nome {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+  }
+
+  .fase-desc {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .fase-items {
+    list-style: none;
+    margin-bottom: 14px;
+  }
+
+  .fase-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--gray-600);
+    padding: 3px 0;
+  }
+
+  .fase-item .check {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .check-done { background: var(--success); }
+  .check-active { background: var(--blue); }
+  .check-pending { background: var(--gray-200); }
+
+  .progress-bar {
+    height: 5px;
+    background: var(--gray-100);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .fill-done { background: var(--success); }
+  .fill-active { background: var(--blue); }
+  .fill-pending { background: var(--gray-200); }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 5px;
+    text-align: right;
+  }
+
+  /* CRONOGRAMA SEMANAS */
+  .crono-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .crono-week {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  .crono-week.current {
+    border-color: var(--blue);
+    background: #f0f9ff;
+  }
+
+  .week-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gray-200);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .crono-week.current .week-num { color: var(--blue); }
+
+  .week-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .week-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .week-task {
+    font-size: 10px;
+    color: var(--gray-600);
+    padding: 3px 0;
+    border-top: 1px solid var(--gray-100);
+    line-height: 1.4;
+  }
+
+  /* CALENDAR */
+  .cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .cal-month {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .cal-nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .cal-btn {
+    width: 30px; height: 30px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .cal-day-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 0;
+  }
+
+  .cal-day {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+    padding: 8px;
+    min-height: 64px;
+  }
+
+  .cal-day.empty { background: transparent; border-color: transparent; }
+  .cal-day.today { border-color: var(--blue); background: #f0f9ff; }
+  .cal-day.has-event { border-color: var(--gray-200); }
+
+  .day-num {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+  }
+
+  .today .day-num { color: var(--blue); }
+
+  .cal-event {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+
+  .ev-reel { background: #e8f5fc; color: #1a7aab; }
+  .ev-carrossel { background: #ede9fe; color: #5b21b6; }
+  .ev-gravacao { background: var(--warning-bg); color: var(--warning); }
+  .ev-entrega { background: var(--success-bg); color: var(--success); }
+
+  .cal-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--gray-400);
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+  }
+
+  /* APPROVAL */
+  .approval-filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .filter-btn {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn.active {
+    background: var(--blue-dark);
+    color: white;
+    border-color: var(--blue-dark);
+  }
+
+  .approval-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .approval-card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .approval-card:hover { border-color: var(--gray-200); }
+
+  .approval-thumb {
+    width: 52px; height: 52px;
+    border-radius: 8px;
+    background: var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .approval-info { flex: 1; min-width: 0; }
+
+  .approval-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--blue);
+    margin-bottom: 3px;
+  }
+
+  .approval-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .approval-meta {
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  .approval-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+  }
+
+  .btn-ghost {
+    background: white;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+  }
+  .btn-ghost:hover { background: var(--gray-50); }
+
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+  .btn-primary:hover { background: #1d96c8; }
+
+  .btn-success {
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid #bbf7d0;
+    cursor: default;
+  }
+
+  .approved-check {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--success);
+  }
+
+  /* COMMENT BOX */
+  .comment-box {
+    background: white;
+    border: 1px solid var(--blue);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .comment-box.open { display: block; }
+
+  .comment-box-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 10px;
+  }
+
+  .comment-textarea {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 10px 12px;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+  }
+
+  .comment-textarea:focus { border-color: var(--blue); }
+
+  .comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* RELATORIOS */
+  .two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .deliverable-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13px;
+  }
+
+  .deliverable-row:last-child { border-bottom: none; }
+
+  .del-name { color: var(--gray-600); }
+  .del-count {
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+
+  .del-bar-wrap {
+    width: 80px;
+    height: 5px;
+    background: var(--gray-100);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .del-bar {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 3px;
+  }
+
+  .channel-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .channel-item:last-child { border-bottom: none; }
+
+  .channel-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    background: var(--gray-100);
+    flex-shrink: 0;
+  }
+
+  .channel-name { font-size: 13px; font-weight: 600; color: var(--gray-900); }
+  .channel-sub { font-size: 11px; color: var(--gray-400); }
+
+  .channel-status {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* EMPTY STATES */
+  .empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--gray-400);
+  }
+
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-text { font-size: 13px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tab-panel.active {
+    animation: fadeIn 0.25s ease;
+  }
+
+  /* SUCCESS TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--blue-dark);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 999;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">LETS<span class="bang">!</span>DOC</div>
+    <div class="logo-sub">Portal do Cliente</div>
+  </div>
+
+  <div class="sidebar-client">
+    <div class="client-label">Cliente</div>
+    <div class="client-avatar">LG</div>
+    <div class="client-name">Dra. Luanne Gerbassi</div>
+    <div class="client-spec">Endocrinologia · Dermatologia</div>
+    <div class="plan-badge">Lets Elevate</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Principal</div>
+    <div class="nav-item active" onclick="navigate('processos', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Processos
+    </div>
+    <div class="nav-item" onclick="navigate('calendario', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <rect x="1.5" y="3" width="13" height="11.5" rx="2" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M1.5 7h13" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Calendário
+    </div>
+    <div class="nav-item" onclick="navigate('aprovacoes', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Aprovações
+      <span class="nav-badge">3</span>
+    </div>
+
+    <div class="nav-section-label">Projeto</div>
+    <div class="nav-item" onclick="navigate('entregas', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1L10.5 6 16 6.5 12 10.5l1 5.5L8 13.5 3 16l1-5.5L0 6.5 5.5 6 8 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+      Entregas
+    </div>
+    <div class="nav-item" onclick="navigate('relatorios', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <path d="M2 12V4M6 12V7M10 12V5M14 12V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Relatórios
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="footer-line">Lets!DOC — Marketing Médico</div>
+    <div class="footer-line">contato@lets-doc.com</div>
+    <div class="footer-line" style="margin-top:4px; color:rgba(255,255,255,0.2);">v1.0 · Plano Elevate · 6m</div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">PROCESSOS</div>
+    <div class="topbar-right">
+      <div class="topbar-date">Março 2026</div>
+      <div class="notif-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 1.5A4.5 4.5 0 003.5 6v3L2 11h12l-1.5-2V6A4.5 4.5 0 008 1.5z" stroke="#4a5568" stroke-width="1.3"/>
+          <path d="M6.5 13a1.5 1.5 0 003 0" stroke="#4a5568" stroke-width="1.3"/>
+        </svg>
+        <div class="notif-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PROCESSOS -->
+    <div id="tab-processos" class="tab-panel active">
+      <div class="section-header">
+        <div class="section-title">Visão geral do projeto</div>
+        <div class="section-sub">Acompanhe o andamento completo da sua operação Lets!DOC</div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-label">Semana atual</div>
+          <div class="metric-value">03 <span class="unit">/ 6</span></div>
+          <div class="metric-tag tag-blue">Em andamento</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Conteúdos produzidos</div>
+          <div class="metric-value">18 <span class="unit">/ 72</span></div>
+          <div class="metric-tag tag-amber">25% concluído</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Aprovações pendentes</div>
+          <div class="metric-value">3</div>
+          <div class="metric-tag tag-amber">Aguardando</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Próxima publicação</div>
+          <div class="metric-value" style="font-size:20px">14 abr</div>
+          <div class="metric-tag tag-gray">15 dias</div>
+        </div>
+      </div>
+
+      <!-- FASES -->
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:12px;">Fases do projeto</div>
+
+      <div class="fases-grid">
+        <div class="fase-card done">
+          <div class="fase-num">Fase 01</div>
+          <div class="fase-nome">Estratégia e Direcionamento</div>
+          <div class="fase-desc">Imersão na especialidade, posicionamento e planejamento editorial</div>
+          <ul class="fase-items">
+            <li class="fase-item">
+              <div class="check check-done">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              Reunião de briefing inicial
+            </li>
+            <li class="fase-item">
+              <div class="check check-done">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              Definição de posicionamento
+            </li>
+            <li class="fase-item">
+              <div class="check check-done">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              Planejamento editorial (6 meses)
+            </li>
+            <li class="fase-item">
+              <div class="check check-done">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              Validação de estratégia
+            </li>
+          </ul>
+          <div class="progress-bar"><div class="progress-fill fill-done" style="width:100%"></div></div>
+          <div class="progress-label" style="color:var(--success)">Concluída</div>
+        </div>
+
+        <div class="fase-card active">
+          <div class="fase-num">Fase 02</div>
+          <div class="fase-nome">Produção de Conteúdo</div>
+          <div class="fase-desc">Roteiro, captação profissional, edição e design dos carrosséis</div>
+          <ul class="fase-items">
+            <li class="fase-item">
+              <div class="check check-done">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              Criação de roteiros
+            </li>
+            <li class="fase-item">
+              <div class="check check-active" style="background:var(--blue)">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="2" fill="white"/></svg>
+              </div>
+              Diária de captação — 3 abr
+            </li>
+            <li class="fase-item">
+              <div class="check check-pending"></div>
+              Edição profissional dos reels
+            </li>
+            <li class="fase-item">
+              <div class="check check-pending"></div>
+              Desenvolvimento carrosséis
+            </li>
+          </ul>
+          <div class="progress-bar"><div class="progress-fill fill-active" style="width:45%"></div></div>
+          <div class="progress-label">45% concluída</div>
+        </div>
+
+        <div class="fase-card">
+          <div class="fase-num">Fase 03</div>
+          <div class="fase-nome">Finalização e Publicação</div>
+          <div class="fase-desc">Aprovação final, agendamento e distribuição nos canais</div>
+          <ul class="fase-items">
+            <li class="fase-item">
+              <div class="check check-pending"></div>
+              Aprovação final dos conteúdos
+            </li>
+            <li class="fase-item">
+              <div class="check check-pending"></div>
+              Agendamento das publicações
+            </li>
+            <li class="fase-item">
+              <div class="check check-pending"></div>
+              Instagram + TikTok + LinkedIn
+            </li>
+            <li class="fase-item">
+              <div class="check check-pending"></div>
+              Relatório de resultados
+            </li>
+          </ul>
+          <div class="progress-bar"><div class="progress-fill fill-pending" style="width:0%"></div></div>
+          <div class="progress-label">Aguardando fase 02</div>
+        </div>
+      </div>
+
+      <!-- CRONOGRAMA SEMANAS -->
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-400); margin-bottom:12px;">Cronograma — 6 semanas</div>
+
+      <div class="crono-grid">
+        <div class="crono-week">
+          <div class="week-num">01</div>
+          <div class="week-title">Briefing inicial</div>
+          <div class="week-tasks">
+            <div class="week-task">✓ Reunião 1 — imersão</div>
+            <div class="week-task">✓ Alinhamento de objetivos</div>
+          </div>
+        </div>
+        <div class="crono-week">
+          <div class="week-num">02</div>
+          <div class="week-title">Posicionamento e editorial</div>
+          <div class="week-tasks">
+            <div class="week-task">✓ Reunião 2 — posicionamento</div>
+            <div class="week-task">✓ Linhas de conteúdo</div>
+          </div>
+        </div>
+        <div class="crono-week current">
+          <div class="week-num">03</div>
+          <div class="week-title">Desenvolvimento estratégico</div>
+          <div class="week-tasks">
+            <div class="week-task">→ Criação de roteiros</div>
+            <div class="week-task">→ Reunião 3 — validação</div>
+          </div>
+        </div>
+        <div class="crono-week">
+          <div class="week-num">04</div>
+          <div class="week-title">Captação profissional</div>
+          <div class="week-tasks">
+            <div class="week-task">Organização de looks</div>
+            <div class="week-task">Diária de gravação</div>
+          </div>
+        </div>
+        <div class="crono-week">
+          <div class="week-num">05</div>
+          <div class="week-title">Pós-produção</div>
+          <div class="week-tasks">
+            <div class="week-task">Edição dos reels</div>
+            <div class="week-task">Design carrosséis</div>
+          </div>
+        </div>
+        <div class="crono-week">
+          <div class="week-num">06</div>
+          <div class="week-title">Publicação</div>
+          <div class="week-tasks">
+            <div class="week-task">Entrega para validação</div>
+            <div class="week-task">Início das publicações</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDÁRIO -->
+    <div id="tab-calendario" class="tab-panel">
+      <div class="section-header">
+        <div class="section-title">Calendário editorial</div>
+        <div class="section-sub">Visualize todas as publicações e eventos do seu projeto</div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="cal-header">
+          <div class="cal-month">Abril 2026</div>
+          <div class="cal-nav">
+            <button class="cal-btn">‹</button>
+            <button class="cal-btn">›</button>
+          </div>
+        </div>
+
+        <div class="cal-grid">
+          <div class="cal-day-label">Seg</div>
+          <div class="cal-day-label">Ter</div>
+          <div class="cal-day-label">Qua</div>
+          <div class="cal-day-label">Qui</div>
+          <div class="cal-day-label">Sex</div>
+          <div class="cal-day-label">Sáb</div>
+          <div class="cal-day-label">Dom</div>
+
+          <div class="cal-day empty"></div>
+          <div class="cal-day"><div class="day-num">1</div></div>
+          <div class="cal-day"><div class="day-num">2</div></div>
+          <div class="cal-day has-event"><div class="day-num">3</div><div class="cal-event ev-gravacao">Gravação</div></div>
+          <div class="cal-day"><div class="day-num">4</div></div>
+          <div class="cal-day"><div class="day-num">5</div></div>
+          <div class="cal-day"><div class="day-num">6</div></div>
+
+          <div class="cal-day"><div class="day-num">7</div></div>
+          <div class="cal-day has-event"><div class="day-num">8</div><div class="cal-event ev-reel">Reel</div></div>
+          <div class="cal-day"><div class="day-num">9</div></div>
+          <div class="cal-day"><div class="day-num">10</div></div>
+          <div class="cal-day has-event"><div class="day-num">11</div><div class="cal-event ev-carrossel">Carrossel</div></div>
+          <div class="cal-day"><div class="day-num">12</div></div>
+          <div class="cal-day"><div class="day-num">13</div></div>
+
+          <div class="cal-day today"><div class="day-num">14</div><div class="cal-event ev-entrega">Entrega</div></div>
+          <div class="cal-day has-event"><div class="day-num">15</div><div class="cal-event ev-reel">Reel</div></div>
+          <div class="cal-day"><div class="day-num">16</div></div>
+          <div class="cal-day has-event"><div class="day-num">17</div><div class="cal-event ev-carrossel">Carrossel</div></div>
+          <div class="cal-day"><div class="day-num">18</div></div>
+          <div class="cal-day"><div class="day-num">19</div></div>
+          <div class="cal-day"><div class="day-num">20</div></div>
+
+          <div class="cal-day has-event"><div class="day-num">21</div><div class="cal-event ev-reel">Reel</div></div>
+          <div class="cal-day"><div class="day-num">22</div></div>
+          <div class="cal-day has-event"><div class="day-num">23</div><div class="cal-event ev-carrossel">Carrossel</div></div>
+          <div class="cal-day"><div class="day-num">24</div></div>
+          <div class="cal-day has-event"><div class="day-num">25</div><div class="cal-event ev-reel">Reel</div></div>
+          <div class="cal-day"><div class="day-num">26</div></div>
+          <div class="cal-day"><div class="day-num">27</div></div>
+
+          <div class="cal-day has-event"><div class="day-num">28</div><div class="cal-event ev-reel">Reel</div></div>
+          <div class="cal-day"><div class="day-num">29</div></div>
+          <div class="cal-day has-event"><div class="day-num">30</div><div class="cal-event ev-carrossel">Carrossel</div></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+        </div>
+
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#e8f5fc; border:1px solid #2AACE2;"></div>Reel</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ede9fe; border:1px solid #7c3aed;"></div>Carrossel</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--warning-bg); border:1px solid var(--warning);"></div>Gravação</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--success-bg); border:1px solid var(--success);"></div>Entrega</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APROVAÇÕES -->
+    <div id="tab-aprovacoes" class="tab-panel">
+      <div class="section-header">
+        <div class="section-title">Aprovações de conteúdo</div>
+        <div class="section-sub">Revise, aprove ou solicite ajustes nos conteúdos produzidos</div>
+      </div>
+
+      <div class="approval-filters">
+        <button class="filter-btn active" onclick="filterApproval('todos', this)">Todos (4)</button>
+        <button class="filter-btn" onclick="filterApproval('pendente', this)">Pendentes (3)</button>
+        <button class="filter-btn" onclick="filterApproval('aprovado', this)">Aprovados (1)</button>
+      </div>
+
+      <div class="approval-list" id="approval-list">
+
+        <div class="approval-card" data-status="pendente" id="ap1">
+          <div class="approval-thumb">🎬</div>
+          <div class="approval-info">
+            <div class="approval-type">Reel · Instagram + TikTok</div>
+            <div class="approval-title">Diabetes tipo 2: 5 mitos que os pacientes acreditam</div>
+            <div class="approval-meta">Enviado em 28 mar · Semana 05 · Aprovação final</div>
+          </div>
+          <div class="approval-actions" id="ap1-actions">
+            <button class="btn btn-ghost" onclick="openComment(1)">Solicitar ajuste</button>
+            <button class="btn btn-primary" onclick="approve(1)">Aprovar</button>
+          </div>
+        </div>
+
+        <div id="comment-1" class="comment-box">
+          <div class="comment-box-title">Solicitar ajuste — Reel Diabetes tipo 2</div>
+          <textarea class="comment-textarea" rows="3" placeholder="Descreva o ajuste necessário com detalhes..."></textarea>
+          <div class="comment-actions">
+            <button class="btn btn-ghost" onclick="closeComment(1)">Cancelar</button>
+            <button class="btn btn-primary" onclick="sendComment(1)">Enviar solicitação</button>
+          </div>
+        </div>
+
+        <div class="approval-card" data-status="pendente" id="ap2">
+          <div class="approval-thumb">📸</div>
+          <div class="approval-info">
+            <div class="approval-type">Carrossel · Instagram</div>
+            <div class="approval-title">Tireoide: 5 sinais de que você precisa investigar</div>
+            <div class="approval-meta">Enviado em 29 mar · Semana 05 · Aprovação final</div>
+          </div>
+          <div class="approval-actions" id="ap2-actions">
+            <button class="btn btn-ghost" onclick="openComment(2)">Solicitar ajuste</button>
+            <button class="btn btn-primary" onclick="approve(2)">Aprovar</button>
+          </div>
+        </div>
+
+        <div id="comment-2" class="comment-box">
+          <div class="comment-box-title">Solicitar ajuste — Carrossel Tireoide</div>
+          <textarea class="comment-textarea" rows="3" placeholder="Descreva o ajuste necessário com detalhes..."></textarea>
+          <div class="comment-actions">
+            <button class="btn btn-ghost" onclick="closeComment(2)">Cancelar</button>
+            <button class="btn btn-primary" onclick="sendComment(2)">Enviar solicitação</button>
+          </div>
+        </div>
+
+        <div class="approval-card" data-status="pendente" id="ap3">
+          <div class="approval-thumb">🎬</div>
+          <div class="approval-info">
+            <div class="approval-type">Reel · Instagram + TikTok</div>
+            <div class="approval-title">Pré-diabetes: o que fazer antes que avance</div>
+            <div class="approval-meta">Enviado em 30 mar · Semana 05 · Aprovação final</div>
+          </div>
+          <div class="approval-actions" id="ap3-actions">
+            <button class="btn btn-ghost" onclick="openComment(3)">Solicitar ajuste</button>
+            <button class="btn btn-primary" onclick="approve(3)">Aprovar</button>
+          </div>
+        </div>
+
+        <div id="comment-3" class="comment-box">
+          <div class="comment-box-title">Solicitar ajuste — Reel Pré-diabetes</div>
+          <textarea class="comment-textarea" rows="3" placeholder="Descreva o ajuste necessário com detalhes..."></textarea>
+          <div class="comment-actions">
+            <button class="btn btn-ghost" onclick="closeComment(3)">Cancelar</button>
+            <button class="btn btn-primary" onclick="sendComment(3)">Enviar solicitação</button>
+          </div>
+        </div>
+
+        <div class="approval-card" data-status="aprovado" id="ap4" style="opacity:0.7">
+          <div class="approval-thumb">📸</div>
+          <div class="approval-info">
+            <div class="approval-type">Carrossel · Instagram</div>
+            <div class="approval-title">Acne hormonal: causas e tratamentos na endocrinologia</div>
+            <div class="approval-meta">Aprovado em 25 mar · Semana 04</div>
+          </div>
+          <div class="approval-actions">
+            <div class="approved-check">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><path d="M5 8l2.5 2.5 4-4" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Aprovado
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTREGAS -->
+    <div id="tab-entregas" class="tab-panel">
+      <div class="section-header">
+        <div class="section-title">Entregas do projeto</div>
+        <div class="section-sub">Plano Lets Elevate — 72 conteúdos em 6 meses</div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Progresso de entregas</div>
+          <div class="deliverable-row">
+            <div class="del-name">Reels com captação profissional</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="del-bar-wrap"><div class="del-bar" style="width:25%"></div></div>
+              <div class="del-count">6 <span style="font-weight:400;color:var(--gray-400)">/ 24</span></div>
+            </div>
+          </div>
+          <div class="deliverable-row">
+            <div class="del-name">Carrosséis</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="del-bar-wrap"><div class="del-bar" style="width:17%"></div></div>
+              <div class="del-count">4 <span style="font-weight:400;color:var(--gray-400)">/ 24</span></div>
+            </div>
+          </div>
+          <div class="deliverable-row">
+            <div class="del-name">Vídeos real time (médico)</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="del-bar-wrap"><div class="del-bar" style="width:67%"></div></div>
+              <div class="del-count">8 <span style="font-weight:400;color:var(--gray-400)">/ 12</span></div>
+            </div>
+          </div>
+          <div class="deliverable-row">
+            <div class="del-name">Cards institucionais</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="del-bar-wrap"><div class="del-bar" style="width:0%"></div></div>
+              <div class="del-count">0 <span style="font-weight:400;color:var(--gray-400)">/ 12</span></div>
+            </div>
+          </div>
+          <div class="deliverable-row" style="border-top:2px solid var(--gray-200); padding-top:12px; margin-top:4px;">
+            <div class="del-name" style="font-weight:700">Total</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="del-bar-wrap"><div class="del-bar" style="width:25%"></div></div>
+              <div class="del-count">18 <span style="font-weight:400;color:var(--gray-400)">/ 72</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Canais de publicação</div>
+          <div class="channel-item">
+            <div class="channel-icon">📸</div>
+            <div>
+              <div class="channel-name">Instagram</div>
+              <div class="channel-sub">Feed + Reels + Stories</div>
+            </div>
+            <div class="channel-status tag-blue">Ativo</div>
+          </div>
+          <div class="channel-item">
+            <div class="channel-icon">🎵</div>
+            <div>
+              <div class="channel-name">TikTok</div>
+              <div class="channel-sub">Reels · formato vertical</div>
+            </div>
+            <div class="channel-status tag-blue">Ativo</div>
+          </div>
+          <div class="channel-item">
+            <div class="channel-icon">💼</div>
+            <div>
+              <div class="channel-name">LinkedIn</div>
+              <div class="channel-sub">Autoridade e networking</div>
+            </div>
+            <div class="channel-status tag-amber">Configurando</div>
+          </div>
+          <div style="border-top:1px solid var(--gray-100); padding-top:14px; margin-top:4px;">
+            <div style="font-size:11px; color:var(--gray-400); margin-bottom:4px;">Captação profissional</div>
+            <div style="font-size:13px; color:var(--gray-600);">30 fotos profissionais · 2 diárias incluídas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATÓRIOS -->
+    <div id="tab-relatorios" class="tab-panel">
+      <div class="section-header">
+        <div class="section-title">Relatórios</div>
+        <div class="section-sub">Acompanhe os resultados mensais do seu projeto</div>
+      </div>
+
+      <div class="card" style="text-align:center; padding:48px 24px;">
+        <div style="font-size:40px; margin-bottom:16px;">📊</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; color:var(--gray-900); margin-bottom:8px;">Relatório em breve</div>
+        <div style="font-size:13px; color:var(--gray-400); max-width:360px; margin:0 auto; line-height:1.6;">Os relatórios mensais de performance estarão disponíveis a partir do início das publicações (semana 06).</div>
+        <div class="metric-tag tag-amber" style="margin-top:16px; display:inline-block;">Disponível a partir de 14/04</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+  function navigate(tab, el) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    el.classList.add('active');
+    const titles = {
+      processos: 'PROCESSOS',
+      calendario: 'CALENDÁRIO EDITORIAL',
+      aprovacoes: 'APROVAÇÕES',
+      entregas: 'ENTREGAS',
+      relatorios: 'RELATÓRIOS'
+    };
+    document.getElementById('page-title').textContent = titles[tab] || tab.toUpperCase();
+  }
+
+  function approve(n) {
+    const actions = document.getElementById('ap' + n + '-actions');
+    actions.innerHTML = '<div class="approved-check"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><path d="M5 8l2.5 2.5 4-4" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Aprovado</div>';
+    const card = document.getElementById('ap' + n);
+    card.style.opacity = '0.75';
+    card.setAttribute('data-status', 'aprovado');
+    closeComment(n);
+    showToast('Conteúdo aprovado! A equipe Lets!DOC foi notificada.');
+    updateBadge();
+  }
+
+  function openComment(n) {
+    document.querySelectorAll('.comment-box').forEach(c => c.classList.remove('open'));
+    document.getElementById('comment-' + n).classList.add('open');
+  }
+
+  function closeComment(n) {
+    document.getElementById('comment-' + n).classList.remove('open');
+  }
+
+  function sendComment(n) {
+    const box = document.getElementById('comment-' + n);
+    const txt = box.querySelector('textarea').value.trim();
+    if (!txt) { box.querySelector('textarea').focus(); return; }
+    closeComment(n);
+    showToast('Ajuste solicitado! A equipe irá revisar em breve.');
+  }
+
+  function filterApproval(status, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.approval-card').forEach(card => {
+      if (status === 'todos' || card.getAttribute('data-status') === status) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function updateBadge() {
+    const pending = document.querySelectorAll('.approval-card[data-status="pendente"]').length;
+    const badge = document.querySelector('.nav-badge');
+    if (badge) badge.textContent = pending;
+  }
+</script>
+</body>
+</html>
